@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+		<title>YEJI MAIL</title>
+		<div class="title">
+			<h1><b>E-Mail</b></h1>
+			<h4><b>yeji.com</b></h4>
+		</div>
+		
+    <!-- Navigation Bars -->
+    <!-- 메일보내기빼고 다른 메뉴는 #을 링크로 주어 페이징이 안되도록 진행 -->
+		<nav class="navbar navbar-inverse" >
+  			<div class="container-fluid">
+				<ul class="nav navbar-nav">
+      				<li><a href="#">주소록</a></li>
+      				<li class="active"><a href="#">메일보내기</a></li>
+      				<li><a href="#">전송결과</a></li>  
+      				<li><a href="#">메일API</a></li>
+					<li><a href="#">충전하기</a></li>
+					<li>
+						<a href="{% url 'user:logout' %}">LogOut</a>
+					</li>
+					<li>
+						<a href="{% url 'user:ModifyView' %}">Modify</a>
+					</li>
+    			</ul>
+  			</div>
+		</nav>
+    <!-- Button <보내기, 미리보기, 임시저장> -->
+		<button type="button" class="btn btn-info" onclick = 'err()'>▶보내기</button>
+		<button type="button" class="btn btn-default">미리보기</button>
+		<button type="button" class="btn btn-default">임시저장</button>
+
+		<table class = "table"> 
+      <!-- tr : 행, td : 셀, th : 해당 테이블의 허더 셀(제목 셀) -->
+			<tbody>
+        		<tr>
+					<th class="text-center">보내는 사람</th>
+					<td>
+						<div class="col-md-9">
+    						<input id="msg" type="text" class="form-control" placeholder="이메일을 입력해주세요." value="{{request.session.user_id}}">
+  						</div>
+					</td>
+				</tr>
+				<tr>
+					<th class="text-center">받는 사람</th>
+					<td>
+						<div class="col-md-9">
+    						<input id="usrReci" type="text" class="form-control" placeholder="이메일을 입력해주세요.">
+  						</div>
+					</td>
+				</tr>
+				<tr>
+					<th class="text-center">참조</th>
+					<td>
+						<div class="col-md-9">
+    						<input id="msg" type="text" class="form-control">
+			 			</div>
+			 			<button type="button" class="btn btn-default btn-xs" data-toggle="collapse" data-target="#demo">▼</button>
+						<input id ="demo" type="text" class="collapse" placeholder="숨은 참조를 입력해주세요.">
+					</td>
+				</tr>
+				<tr>
+					<th class="text-center">제목</th>
+					<td>
+						<input type="checkbox" value =""> 중요
+						<div class="col-md-9">
+    							<input id="title" type="text" class="form-control">
+						</div>
+  					</td>
+				</tr>
+				<tr>
+					<th class="text-center">파일 첨부</th>
+					<td>
+						<input type="file" id="myfile" name="myfile" class="btn btn-default">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+   <!-- 내용 폼 시작 -->
+		<form>
+			<div class="col-md-10">
+   			 <div class="form-group">
+      			<h4><b>내용</b></h4>
+      			<textarea class="form-control" rows="13" id="comment"></textarea>
+    		</div>
+    	</div>
+  	</form>
+    <!-- js 시작 -->
+  		<script>
+        // 폼 필수 값 체크
+  		function err(){
+  				var doc = document;
+  				var Recipient = doc.getElementById('usrReci').value
+  				var usrText = doc.getElementById('title').value
+  				if(!Recipient){
+  					alert('받는사람을 입력해주세요');
+  					doc.getElementById('usrReci').focus()// 입력되지 않은 곳에 focus() 를 이용
+  					return
+  				}if(!usrText){
+  					alert('제목을 입력해주세요');
+  					doc.getElementById('title').focus()
+  					return
+  				}
+          // 보내기 전 이메일 유효성을 테스트하기 위해 조건문
+          if(!email_chaeck(Recipient)){
+            alert("유효하지 않은 메일 주소입니다. 다시 입력해주세요.")
+            doc.getElementById('usrReci').focus()
+            return
+          }
+		}
+        // 이메일 유효성 검사 정규식
+        function email_chaeck(email) {
+          var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+          return re.test(email)
+        }
+  		</script>
+</body>

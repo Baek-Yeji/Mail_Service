@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        #divPosition{
+            height: 300px;
+            width: 400px;
+            margin: -200px 0px 0px -150px;
+            position: absolute;
+            top: 50%;
+          left: 50%;
+          padding: 5px;
+      }
+    </style>
+</head>
+<body>
+    <!-- div 중앙으로 배치 : 회원가입 틀  -->
+    <div id="divPosition">
+        <h1><b>Signup Page</b></h1>
+        <br>
+        <form action="" method="POST" method="GET" onsubmit="return err();">
+            {% csrf_token %}
+
+            <label for="user_id">user_id : </label>
+            <input name="user_id" id ="user_id" type="text" check_result = "fail" required/>
+            <input type="button" id="id_overlap_button" onclick = "id_overlap_check()"value="아이디 중복체크"><br><br>
+
+
+            <label for="password">password : </label>
+            <input name="password" id="password" type="password"><br><br>
+            <label for="user_name">user_name : </label>
+            <input name="user_name" id="user_name" type="text" size="5"><br><br>
+
+            <label for="user_tel">Phone : </label>
+            <input name="user_tel" id="user_tel" type="text" size="30"><br> <br>
+            <!-- 회원가입 버튼 -->
+            <button type="submit" class="btn btn-default">SUBMIT</button>
+        </form>
+    </div>
+    <script>
+        // 유효성 체크
+        function err(){
+            id_overlap_check();
+            var user_id = document.getElementById('user_id').value;
+            var user_pn = document.getElementById('user_tel').value
+            var user_pw = document.getElementById('password').value
+            if(!email_check(user_id)){
+                alert("유효하지 않은 메일 주소입니다. 다시 입력해주세요.")
+                document.getElementById('user_id').focus()
+                return false
+            }
+            if(!phoneNumber_check(user_pn)){
+                alert("유효하지 않은 전화번호입니다. 다시 입력해주세요.")
+                document.getElementById('user_tel').focus()
+                return false;
+            }
+            if(!password_check(user_pw)){
+                alert("형식에 맞지 않은 비밀번호입니다. 다시 입력해주세요.")
+                document.getElementById('password').value
+                return false;
+            }
+            success();
+            return true;
+        }
+        // 회원 정보를 보여주는 함수
+        function  success(){
+            var user_id = document.getElementById('user_id').value
+            var user_pn = document.getElementById('user_tel').value
+            var user_pw = document.getElementById('password').value
+            var user_name = document.getElementById('user_name').value
+
+            alert("사용자 아이디 : "+user_id+"\n사용자 비밀번호 : "+user_pw+"\n사용자 이름 : "+user_name+"\n사용자 전화번호 : "+user_pn+"\n가입을 축하드립니다.^__^")
+        }
+        // 아이디(이메일)유효성 체크
+        function email_check(email) {
+          var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+          return re.test(email);
+        }
+        // 전화번호 유효성 체크
+        function phoneNumber_check(phoneNumber){
+            var re = /^\d{3}-\d{3,4}-\d{4}$/;
+            return re.test(phoneNumber)
+        }
+        // 비밀번호 유효성 체크(6자 이상 영문대소문자+숫자+특수문자)
+        function password_check(u_password){
+            var re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{6,}/
+            return re.test(u_password)
+        }
+        // . -> class # -> id
+        // 아이디 중복체크
+        function id_overlap_check(){
+            $('#user_id').change(function(){
+                $('#id_overlap_button').show();
+                $('#user_id').attr("check_result","fail")
+            })
+
+            if($('#user_id').val() == ''){
+                alert("아이디를 입력해주세요.")
+                return;
+            }
+            id_overlap_input = $('#user_id').val();
+
+            $.ajax({
+                url: "{% url 'user:id_overlap_check' %}",
+                data: {
+                    'user_id':id_overlap_input
+                },
+                dataType: 'json',
+                success: function(data){
+                    console.log(data['overlap']);
+                    if(data['overlap']=="fail"){
+                        alert("이미 존재하는 아이디입니다.");
+                        id_overlap_input.focus();
+                        return;
+                    }else{
+                        alert("사용가능한 아이디입니다.");
+                        $('#user_id').attr("check_result","success");
+                        $('#id_overlap_button').hide();
+                        return;
+                    }
+                }
+            });
+        }
+
+    </script>
+</body>
+

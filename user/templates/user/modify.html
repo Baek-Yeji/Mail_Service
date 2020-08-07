@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        #divPosition{
+            height: 300px;
+            width: 400px;
+            margin: -200px 0px 0px -150px;
+            position: absolute;
+            top: 50%;
+          left: 50%;
+          padding: 5px;
+      }
+    </style>
+</head>
+<body>
+    <div id="divPosition">
+        <h1><b>Modify Page</b></h1>
+        <br>
+        <form action="" method="POST" onsubmit="return mo_err()">
+            {% csrf_token %}
+            <label for="user_id">user_id : </label>
+            <input type="text" id="user_id" name="user_id" value="{{request.session.user_id}}"><br><br>
+
+            <label for="password">password : </label>
+            <input type="password" id="password" name="password"><br><br>
+            
+            <label for="user_name">user_name : </label>
+            <input type="text" id = "user_name" name="user_name"><br><br>
+            
+            <label for="user_tel">user_tel : </label>
+            <input type="text" id = "user_tel" name="user_tel"><br><br>
+            
+            <button type="submit" class="btn btn-default">SUBMIT</button>
+        </form>
+    </div>
+    <script>
+        // 유효성 체크
+        function mo_err(){
+            var user_pn = document.getElementById('user_tel').value
+            var user_pw = document.getElementById('password').value
+
+            if(!phoneNumber_check(user_pn)){
+                alert("유효하지 않은 전화번호입니다. 다시 입력해주세요.")
+                document.getElementById('user_tel').focus()
+                return false;
+            }
+            if(!password_check(user_pw)){
+                alert("형식에 맞지 않은 비밀번호입니다. 다시 입력해주세요.")
+                document.getElementById('password').value
+                return false;
+            }
+            success();
+            return true;
+        }
+        // 회원 정보를 보여주는 함수
+        function  success(){
+            var user_name = document.getElementById('user_name').value
+
+            alert(user_name+"님 회원정보 변경을 완료하였습니다. \n다시 로그인 해주세요.")
+        }
+
+        // 전화번호 유효성 체크
+        function phoneNumber_check(phoneNumber){
+            var re = /^\d{3}-\d{3,4}-\d{4}$/;
+            return re.test(phoneNumber)
+        }
+        // 비밀번호 유효성 체크(6자 이상 영문대소문자+숫자+특수문자)
+        function password_check(u_password){
+            var re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{6,}/
+            return re.test(u_password)
+        }
+    </script>
+</body>
